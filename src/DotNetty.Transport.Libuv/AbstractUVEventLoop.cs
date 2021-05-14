@@ -36,8 +36,8 @@ namespace DotNetty.Transport.Libuv
     using DotNetty.Common.Concurrency;
     using DotNetty.Common.Internal;
     using DotNetty.Transport.Channels;
-    using DotNetty.NetUV.Handles;
-    using Timer = DotNetty.NetUV.Handles.Timer;
+    using DotNetty.Transport.Libuv.Handles;
+    using Timer = DotNetty.Transport.Libuv.Handles.Timer;
 
     public abstract class AbstractUVEventLoop : SingleThreadEventLoopBase
     {

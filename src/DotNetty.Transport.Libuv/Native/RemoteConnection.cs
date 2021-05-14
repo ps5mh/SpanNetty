@@ -26,10 +26,10 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-namespace DotNetty.Transport.Libuv.Internal
+namespace DotNetty.Transport.Libuv.Native
 {
     using System;
-    using DotNetty.NetUV.Handles;
+    using DotNetty.Transport.Libuv.Handles;
 
     sealed class RemoteConnection
     {

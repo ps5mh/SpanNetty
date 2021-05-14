@@ -26,12 +26,12 @@ namespace DotNetty.Transport.Libuv
     using System.Threading;
     using DotNetty.Common.Concurrency;
 
-    internal sealed class EventLoopChooserFactory<TEventLoop> : IEventExecutorChooserFactory<TEventLoop>
+    internal sealed class UVEventLoopChooserFactory<TEventLoop> : IEventExecutorChooserFactory<TEventLoop>
         where TEventLoop : AbstractUVEventLoop
     {
-        public static readonly EventLoopChooserFactory<TEventLoop> Instance = new EventLoopChooserFactory<TEventLoop>();
+        public static readonly UVEventLoopChooserFactory<TEventLoop> Instance = new UVEventLoopChooserFactory<TEventLoop>();
 
-        private EventLoopChooserFactory() { }
+        private UVEventLoopChooserFactory() { }
 
         public IEventExecutorChooser<TEventLoop> NewChooser(TEventLoop[] eventLoops)
         {

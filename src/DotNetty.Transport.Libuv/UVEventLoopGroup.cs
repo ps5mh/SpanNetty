@@ -31,54 +31,54 @@ namespace DotNetty.Transport.Libuv
     using System;
     using System.Threading.Tasks;
     using DotNetty.Common.Concurrency;
-    using DotNetty.NetUV.Handles;
+    using DotNetty.Transport.Libuv.Handles;
     using DotNetty.Transport.Channels;
 
-    public sealed class EventLoopGroup : MultithreadEventLoopGroup<EventLoopGroup, UVEventLoop>
+    public sealed class UVEventLoopGroup : MultithreadEventLoopGroup<UVEventLoopGroup, UVEventLoop>
     {
         private static readonly int DefaultEventLoopCount;
-        private static readonly Func<EventLoopGroup, UVEventLoop> DefaultEventLoopFactory;
+        private static readonly Func<UVEventLoopGroup, UVEventLoop> DefaultEventLoopFactory;
 
-        static EventLoopGroup()
+        static UVEventLoopGroup()
         {
             DefaultEventLoopCount = Environment.ProcessorCount;
             DefaultEventLoopFactory = group => new UVEventLoop(group);
         }
 
 
-        public EventLoopGroup()
+        public UVEventLoopGroup()
             : this(0)
         {
         }
 
-        public EventLoopGroup(int nThreads)
-            : base(0u >= (uint)nThreads ? DefaultEventLoopCount : nThreads, EventLoopChooserFactory<UVEventLoop>.Instance, DefaultEventLoopFactory)
+        public UVEventLoopGroup(int nThreads)
+            : base(0u >= (uint)nThreads ? DefaultEventLoopCount : nThreads, UVEventLoopChooserFactory<UVEventLoop>.Instance, DefaultEventLoopFactory)
         {
         }
 
-        public EventLoopGroup(int nThreads, TimeSpan breakoutInterval)
+        public UVEventLoopGroup(int nThreads, TimeSpan breakoutInterval)
             : this(nThreads, DefaultThreadFactory<UVEventLoop>.Instance, RejectedExecutionHandlers.Reject(), breakoutInterval)
         {
         }
 
-        public EventLoopGroup(int nThreads, IRejectedExecutionHandler rejectedHandler)
+        public UVEventLoopGroup(int nThreads, IRejectedExecutionHandler rejectedHandler)
             : this(nThreads, rejectedHandler, AbstractUVEventLoop.DefaultBreakoutInterval)
         {
         }
 
-        public EventLoopGroup(int nThreads, IRejectedExecutionHandler rejectedHandler, TimeSpan breakoutInterval)
+        public UVEventLoopGroup(int nThreads, IRejectedExecutionHandler rejectedHandler, TimeSpan breakoutInterval)
             : this(nThreads, DefaultThreadFactory<UVEventLoop>.Instance, rejectedHandler, breakoutInterval)
         {
         }
 
-        public EventLoopGroup(int nThreads, IThreadFactory threadFactory, TimeSpan breakoutInterval)
+        public UVEventLoopGroup(int nThreads, IThreadFactory threadFactory, TimeSpan breakoutInterval)
             : this(nThreads, threadFactory, RejectedExecutionHandlers.Reject(), breakoutInterval)
         {
         }
 
-        public EventLoopGroup(int nThreads, IThreadFactory threadFactory, IRejectedExecutionHandler rejectedHandler, TimeSpan breakoutInterval)
+        public UVEventLoopGroup(int nThreads, IThreadFactory threadFactory, IRejectedExecutionHandler rejectedHandler, TimeSpan breakoutInterval)
             : base(0u >= (uint)nThreads ? DefaultEventLoopCount : nThreads,
-                  EventLoopChooserFactory<UVEventLoop>.Instance,
+                  UVEventLoopChooserFactory<UVEventLoop>.Instance,
                   group => new UVEventLoop(group, threadFactory, rejectedHandler, breakoutInterval))
         {
         }

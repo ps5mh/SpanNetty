@@ -23,6 +23,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using DotNetty.Buffers;
+using DotNetty.Common.Concurrency;
 using DotNetty.Common.Internal.Logging;
 using DotNetty.Transport.Libuv.Handles;
 using DotNetty.Transport.Libuv.Native;
@@ -32,6 +33,16 @@ namespace DotNetty.Transport.Libuv
 {
     internal static partial class LibuvLoggingExtensions
     {
+        #region -- Debug --
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopDisposing(this IInternalLogger logger, IDisposable handle)
+        {
+            logger.Debug("Disposing {}", handle.GetType());
+        }
+
+        #endregion
+
         #region -- Info --
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -74,6 +85,18 @@ namespace DotNetty.Transport.Libuv
         public static void Loop_allocated(this IInternalLogger logger, IntPtr handle)
         {
             logger.Info($"Loop {handle} allocated.");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopThreadFinished(this IInternalLogger logger, XThread thread)
+        {
+            logger.Info("Loop {}: thread finished.", thread.Name);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopDisposed(this IInternalLogger logger, XThread thread)
+        {
+            logger.Info("{}:disposed.", thread.Name);
         }
 
         #endregion
@@ -120,6 +143,18 @@ namespace DotNetty.Transport.Libuv
         public static void Loop_close_all_handles_limit_20_times_exceeded(this IInternalLogger logger, IntPtr handle)
         {
             logger.Warn($"Loop {handle} close all handles limit 20 times exceeded.");
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopReleaseError(this IInternalLogger logger, XThread thread, Exception ex)
+        {
+            logger.Warn("{}:release error {}", thread.Name, ex);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopDisposeError(this IInternalLogger logger, IDisposable handle, Exception ex)
+        {
+            logger.Warn("{} dispose error {}", handle.GetType(), ex);
         }
 
         #endregion
@@ -208,6 +243,18 @@ namespace DotNetty.Transport.Libuv
         public static void Failed_to_write_data(this IInternalLogger logger, uv_handle_type handleType, WriteRequest request, Exception exception)
         {
             logger.Error($"{handleType} Failed to write data {request}.", exception);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void LoopRunDefaultError(this IInternalLogger logger, XThread thread, Exception ex)
+        {
+            logger.Error("Loop {}:run default error.", thread.Name, ex);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static void ShuttingDownLoopError(this IInternalLogger logger, Exception ex)
+        {
+            logger.Error("{}: shutting down loop error", ex);
         }
 
         #endregion

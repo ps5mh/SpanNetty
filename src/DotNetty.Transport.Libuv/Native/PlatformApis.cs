@@ -26,14 +26,14 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
-namespace DotNetty.Transport.Libuv.Internal
+namespace DotNetty.Transport.Libuv.Native
 {
     using System;
     using System.Net.Sockets;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
     using DotNetty.Common;
-    using DotNetty.NetUV.Handles;
+    using DotNetty.Transport.Libuv.Handles;
 
     static class PlatformApis
     {

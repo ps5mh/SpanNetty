@@ -22,13 +22,27 @@
 
 using System;
 using DotNetty.Transport.Channels;
-using DotNetty.NetUV.Handles;
+using DotNetty.Transport.Libuv.Native;
 
 namespace DotNetty.Transport.Libuv
 {
-    interface INativeChannel : IChannel
+    interface INativeChannelUnsafe : IChannelUnsafe
     {
-        bool IsBound { get; }
-        IStreamHandle GetHandle();
+        IntPtr UnsafeHandle { get; }
+
+        void FinishConnect(ConnectRequest request);
+
+        uv_buf_t PrepareRead(ReadOperation readOperation);
+
+        void FinishRead(ReadOperation readOperation);
+
+        void FinishWrite(int bytesWritten, OperationException error);
+    }
+
+    internal interface IServerNativeUnsafe
+    {
+        void Accept(RemoteConnection connection);
+
+        void Accept(NativeHandle handle);
     }
 }

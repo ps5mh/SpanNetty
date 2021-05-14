@@ -31,14 +31,13 @@ namespace DotNetty.Transport.Libuv
     using System.Net;
     using System.Runtime.CompilerServices;
     using DotNetty.Common.Concurrency;
-    using DotNetty.NetUV.Handles;
     using DotNetty.Transport.Channels;
+    using DotNetty.Transport.Libuv.Handles;
 
     public abstract partial class NativeChannel<TChannel, TUnsafe> : AbstractChannel<TChannel, TUnsafe>, INativeChannel
         where TChannel : NativeChannel<TChannel, TUnsafe>
         where TUnsafe : NativeChannel<TChannel, TUnsafe>.NativeChannelUnsafe, new()
     {
-
         internal bool ReadPending;
 
         private volatile int v_state;

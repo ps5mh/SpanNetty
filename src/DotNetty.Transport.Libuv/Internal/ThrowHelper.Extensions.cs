@@ -22,7 +22,12 @@
 
 using System;
 using System.Net;
+using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using DotNetty.Common.Utilities;
+using DotNetty.Transport.Channels;
 using DotNetty.Transport.Libuv.Handles;
 using DotNetty.Transport.Libuv.Native;
 
@@ -106,6 +111,7 @@ namespace DotNetty.Transport.Libuv
         typeName,
         nThreads,
         onAccept,
+        pipeName,
         callback,
         interval,
 
@@ -240,6 +246,28 @@ namespace DotNetty.Transport.Libuv
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static Task FromArgumentException_RegChannel()
+        {
+            return TaskUtil.FromException(GetArgumentException());
+
+            static ArgumentException GetArgumentException()
+            {
+                return new ArgumentException($"channel must be of {typeof(INativeChannel)}");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowArgumentException_PipeName()
+        {
+            throw GetArgumentException();
+
+            static ArgumentException GetArgumentException()
+            {
+                return new ArgumentException("Pipe name is required for worker event loop", "parent");
+            }
+        }
+
         #endregion
 
         #region -- InvalidOperationException --
@@ -268,6 +296,26 @@ namespace DotNetty.Transport.Libuv
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowInvalidOperationException_ExecutionState(int executionState)
+        {
+            throw GetInvalidOperationException();
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Invalid state {executionState}");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowInvalidOperationException_ExecutionState0(int executionState)
+        {
+            throw GetInvalidOperationException();
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Invalid {nameof(AbstractUVEventLoop)} state {executionState}");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal static void ThrowInvalidOperationException_uv_handle_type_is_not_readable(uv_handle_type handleType, IntPtr internalHandle, TtyType ttyType)
         {
             throw GetException();
@@ -275,6 +323,81 @@ namespace DotNetty.Transport.Libuv
             {
                 return new InvalidOperationException(
                     $"{handleType} {internalHandle} mode {ttyType} is not readable");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static Task FromInvalidOperationException(IntPtr loopHandle)
+        {
+            return TaskUtil.FromException(GetInvalidOperationException());
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Loop {loopHandle} does not exist");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowInvalidOperationException_Dispatch()
+        {
+            throw GetInvalidOperationException();
+
+            static InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException("No pipe connections to dispatch handles.");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static uint FromInvalidOperationException_Dispatch(AddressFamily addressFamily)
+        {
+            throw GetInvalidOperationException();
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Address family : {addressFamily} platform : {RuntimeInformation.OSDescription} not supported");
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowInvalidOperationException_CreateChild(Exception ex)
+        {
+            throw GetInvalidOperationException();
+            InvalidOperationException GetInvalidOperationException()
+            {
+                return new InvalidOperationException($"Failed to create a child {nameof(WorkerEventLoop)}.", ex.Unwrap());
+            }
+        }
+
+        #endregion
+
+        #region -- ChannelException --
+
+        internal static ChannelException GetChannelException(OperationException ex)
+        {
+            return new ChannelException(ex);
+        }
+
+        internal static ChannelException GetChannelException_FailedToWrite(OperationException error)
+        {
+            return new ChannelException("Failed to write", error);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowChannelException(Exception exc)
+        {
+            throw GetChannelException();
+            ChannelException GetChannelException()
+            {
+                return new ChannelException(exc);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowChannelException(ChannelOption option)
+        {
+            throw GetChannelException();
+            ChannelException GetChannelException()
+            {
+                return new ChannelException($"Invalid channel option {option}");
             }
         }
 
@@ -325,6 +448,48 @@ namespace DotNetty.Transport.Libuv
             {
                 return new PlatformNotSupportedException($"{handleType} send buffer size setting not supported on Windows");
             }
+        }
+
+        #endregion
+
+        #region -- SocketException --
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowSocketException(int errorCode)
+        {
+            throw GetSocketException();
+            SocketException GetSocketException()
+            {
+                return new SocketException(errorCode);
+            }
+        }
+
+        #endregion
+
+        #region -- TimeoutException --
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ThrowTimeoutException(string pipeName)
+        {
+            throw GetException();
+            TimeoutException GetException()
+            {
+                return new TimeoutException($"Connect to dispatcher pipe {pipeName} timed out.");
+            }
+        }
+
+        #endregion
+
+        #region -- ClosedChannelException --
+
+        internal static ClosedChannelException GetClosedChannelException()
+        {
+            return new ClosedChannelException();
+        }
+
+        internal static ClosedChannelException GetClosedChannelException_FailedToWrite(Exception ex)
+        {
+            return new ClosedChannelException("Failed to write", ex);
         }
 
         #endregion

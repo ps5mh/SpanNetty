@@ -33,7 +33,7 @@ namespace DotNetty.Transport.Libuv
     using DotNetty.Common.Concurrency;
     using DotNetty.Transport.Channels;
     using DotNetty.Common;
-    using DotNetty.Transport.Libuv.Internal;
+    using DotNetty.Transport.Libuv.Native;
 
     public sealed class DispatcherEventLoop : AbstractUVEventLoop
     {
