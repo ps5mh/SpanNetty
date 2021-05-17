@@ -33,8 +33,11 @@ namespace DotNetty.Transport.Libuv.Native
 
     sealed class TcpListener : TcpHandle
     {
-        static readonly uv_watcher_cb ConnectionCallback = (h, s) => OnConnectionCallback(h, s);
-
+        [MonoPInvokeCallback(typeof(uv_watcher_cb))]
+        static void ConnectionCallback(IntPtr h, int s)
+        {
+            OnConnectionCallback(h, s);
+        }
         IServerNativeUnsafe _nativeUnsafe;
 
         public TcpListener(Loop loop, uint flags) : base(loop, flags)

@@ -34,7 +34,11 @@ namespace DotNetty.Transport.Libuv.Native
 
     sealed class Timer : NativeHandle
     {
-        static readonly uv_work_cb WorkCallback = h => OnWorkCallback(h);
+        [MonoPInvokeCallback(typeof(uv_work_cb))]
+        static void WorkCallback(IntPtr h)
+        {
+            OnWorkCallback(h);
+        }
 
         readonly Action<object> _callback;
         readonly object _state;

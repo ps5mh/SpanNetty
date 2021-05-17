@@ -41,7 +41,11 @@ namespace DotNetty.Transport.Libuv.Native
     sealed class WriteRequest : NativeRequest, ChannelOutboundBuffer.IMessageProcessor
     {
         private static readonly int BufferSize;
-        private static readonly uv_watcher_cb WriteCallback = (h, s) => OnWriteCallback(h, s);
+        [MonoPInvokeCallback(typeof(uv_watcher_cb))]
+        internal static void WriteCallback(IntPtr h, int s)
+        {
+            OnWriteCallback(h, s);
+        }
 
         private const int MaximumBytes = int.MaxValue;
         private const int MaximumLimit = 64;

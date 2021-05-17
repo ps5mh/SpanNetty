@@ -34,8 +34,16 @@ namespace DotNetty.Transport.Libuv.Native
 
     public sealed class Tcp : TcpHandle
     {
-        static readonly uv_alloc_cb AllocateCallback = OnAllocateCallback;
-        static readonly uv_read_cb ReadCallback = OnReadCallback;
+        [MonoPInvokeCallback(typeof(uv_alloc_cb))]
+        private static void AllocateCallback(IntPtr h, IntPtr s, out uv_buf_t b)
+        {
+            OnAllocateCallback(h, s, out b);
+        }
+        [MonoPInvokeCallback(typeof(uv_read_cb))]
+        private static void ReadCallback(IntPtr h, IntPtr s, ref uv_buf_t b)
+        {
+            OnReadCallback(h, s, ref b);
+        }
 
         readonly ReadOperation _pendingRead;
         INativeUnsafe _nativeUnsafe;

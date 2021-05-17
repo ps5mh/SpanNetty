@@ -38,8 +38,16 @@ namespace DotNetty.Transport.Libuv.Native
     /// </summary>
     sealed unsafe class Pipe : PipeHandle
     {
-        static readonly uv_alloc_cb AllocateCallback = OnAllocateCallback;
-        static readonly uv_read_cb ReadCallback = OnReadCallback;
+        [MonoPInvokeCallback(typeof(uv_alloc_cb))]
+        private static void AllocateCallback(IntPtr h, IntPtr s, out uv_buf_t b)
+        {
+            OnAllocateCallback(h, s, out b);
+        }
+        [MonoPInvokeCallback(typeof(uv_read_cb))]
+        private static void ReadCallback(IntPtr h, IntPtr s, ref uv_buf_t b)
+        {
+            OnReadCallback(h, s, ref b);
+        }
 
         readonly Scratch _scratch;
 
@@ -170,7 +178,11 @@ namespace DotNetty.Transport.Libuv.Native
 
         sealed class Ping : NativeRequest
         {
-            internal static readonly uv_watcher_cb WriteCallback = (h, s) => OnWriteCallback(h, s);
+            [MonoPInvokeCallback(typeof(uv_watcher_cb))]
+            internal static void WriteCallback(IntPtr h, int s)
+            {
+                OnWriteCallback(h, s);
+            }
             static readonly byte[] PingBuf = TextEncodings.UTF8NoBOM.GetBytes("PING");
 
             readonly NativeHandle _sentHandle;

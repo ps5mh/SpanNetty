@@ -26,6 +26,14 @@
  * Licensed under the MIT license. See LICENSE file in the project root for full license information.
  */
 
+using System;
+
+public class MonoPInvokeCallbackAttribute : System.Attribute
+{
+    private Type type;
+    public MonoPInvokeCallbackAttribute(Type t) { type = t; }
+}
+
 namespace DotNetty.Transport.Libuv.Native
 {
     using System;
@@ -34,7 +42,11 @@ namespace DotNetty.Transport.Libuv.Native
 
     sealed unsafe class Async : NativeHandle
     {
-        static readonly uv_work_cb WorkCallback = h => OnWorkCallback(h);
+        [MonoPInvokeCallback(typeof(uv_work_cb))]
+        static void WorkCallback(IntPtr h)
+        {
+             OnWorkCallback(h);
+        }
 
         readonly Action<object> _callback;
         readonly object _state;

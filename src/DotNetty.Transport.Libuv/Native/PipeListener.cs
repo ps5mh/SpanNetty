@@ -39,7 +39,11 @@ namespace DotNetty.Transport.Libuv.Native
     sealed class PipeListener : PipeHandle
     {
         private const int DefaultPipeBacklog = 128;
-        private static readonly uv_watcher_cb ConnectionCallback = (h, s) => OnConnectionCallback(h, s);
+        [MonoPInvokeCallback(typeof(uv_watcher_cb))]
+        private static void ConnectionCallback(IntPtr h, int s)
+        {
+            OnConnectionCallback(h, s);
+        }
 
         private readonly Action<Pipe, int> _onReadAction;
         private readonly List<Pipe> _pipes;
