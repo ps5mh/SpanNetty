@@ -448,6 +448,7 @@ namespace DotNetty.Codecs.Http.WebSockets
                 if (this.receivedClosingHandshake)
                 {
                     closeMessage = Unpooled.Empty;
+                    ctx.Channel.CloseAsync();
                 }
                 else
                 {
@@ -455,8 +456,8 @@ namespace DotNetty.Codecs.Http.WebSockets
                     var errMsg = ex.Message;
                     ICharSequence reasonText = !string.IsNullOrWhiteSpace(errMsg) ? new StringCharSequence(errMsg) : closeStatus.ReasonText;
                     closeMessage = new CloseWebSocketFrame(closeStatus, reasonText);
+                    _ = ctx.WriteAndFlushAsync(closeMessage).CloseOnComplete(ctx.Channel);
                 }
-                _ = ctx.WriteAndFlushAsync(closeMessage).CloseOnComplete(ctx.Channel);
             }
             ExceptionDispatchInfo.Capture(ex).Throw();
         }
